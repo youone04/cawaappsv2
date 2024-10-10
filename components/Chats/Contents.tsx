@@ -1,4 +1,5 @@
 import { View, Text, FlatList, StyleSheet, Image } from "react-native"
+import { Link } from 'expo-router';
 
 const DATA = [
     { id: '1', title: 'Yudi gunawan' },
@@ -16,6 +17,7 @@ export default function Contents() {
             </View>
             <View style={{ flex: 1 }}>
                 <Text style={styles.description}>10.00</Text>
+                <Link href="/chat-screens.parent">View details</Link>
             </View>
         </View>
     );
