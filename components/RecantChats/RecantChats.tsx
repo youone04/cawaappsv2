@@ -1,31 +1,30 @@
 import { View, Text, FlatList, StyleSheet, Image } from "react-native"
 import { Link } from 'expo-router';
+import moment from "moment";
 
-const DATA = [
-    { id: '1', title: 'Yudi gunawan' },
-    { id: '2', title: 'Sueb Kosasi' },
-    { id: '3', title: 'Ujang' },
-    // More items...
-];
-export default function Contents() {
-    const renderItem = ({ item }: { item: { id: string; title: string } }): JSX.Element => (
+
+export default function RecantChats({data}:any) {
+
+    const renderItem = ({ item }: { item: { friendId: string; username: string; lastMessage:string; lastTimestamp:string } }): JSX.Element => (
         <View style={styles.item}>
             <Image style={styles.image} source={{ uri: 'https://i.pravatar.cc/300' }} />
-            <View style={{ flex: 6 }}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.description}>hari ini kerja?</Text>
+            <View style={{ flex: 2 }}>
+                <Text style={styles.title}>{item.username}</Text>
+                <Text style={styles.description}>{item.lastMessage}</Text>
             </View>
             <View style={{ flex: 1 }}>
-                <Text style={styles.description}>10.00</Text>
-                <Link href="/chat-screens.parent">View details</Link>
+                <Text style={styles.description}>{moment(item.lastTimestamp).fromNow()}</Text>
+                <Link
+                 href={`/chat-screen/${item.friendId}`}
+                >View details</Link>
             </View>
         </View>
     );
     return (
         <FlatList
-            data={DATA}
+            data={data}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.friendId}
         />
     )
 }

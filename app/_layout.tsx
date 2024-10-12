@@ -4,11 +4,12 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const isLogin: Boolean = false;
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -31,7 +32,8 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
-        <Stack.Screen name="chat-screens" />
+        <Stack.Screen name="chat-screen" />
+        <Stack.Screen name="login-screen" />
       </Stack>
     </ThemeProvider>
   );

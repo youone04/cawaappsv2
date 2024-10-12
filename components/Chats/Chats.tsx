@@ -1,83 +1,4 @@
-// import React, { useEffect, useState } from 'react';
-// import { View, Text, TextInput, Button, FlatList } from 'react-native';
-// import { io, Socket } from 'socket.io-client';
-
-// interface ChatMessage {
-//   senderId: string;
-//   message: string;
-// }
-
-// const ChatScreen: React.FC = () => {
-//   const [message, setMessage] = useState<string>('');
-//   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-//   const [onlineFriends, setOnlineFriends] = useState<string[]>([]);
-
-//   const userId = localStorage.getItem('userId'); // Set userId dari user yang login
-//   let socket: Socket;
-//   useEffect(() => {
-//     // Inisialisasi socket
-//     socket = io('http://localhost:3000', { query: { userId } });
-//     // Dengar event ketika teman online
-//     socket.on('friendOnline', (friendId: string) => {
-//       console.log(`Teman dengan ID ${friendId} sedang online.`);
-//       setOnlineFriends((prevFriends) => [...prevFriends, friendId]);
-//     });
-
-//     // Dengar event ketika teman offline
-//     socket.on('friendOffline', (friendId: string) => {
-//       console.log(`Teman dengan ID ${friendId} sedang offline.`);
-//       setOnlineFriends((prevFriends) => prevFriends.filter((id) => id !== friendId));
-//     });
-
-//     // Dengar pesan masuk
-//     socket.on('receiveMessage', (payload: ChatMessage) => {
-//       console.log(`Pesan diterima dari ${payload.senderId}: ${payload.message}`);
-//       setChatMessages((prevMessages) => [...prevMessages, payload]);
-//     });
-
-//     // Bersihkan listener ketika komponen unmount
-//     return () => {
-//       socket.off('friendOnline');
-//       socket.off('friendOffline');
-//       socket.off('receiveMessage');
-//       socket.disconnect();
-//     };
-//   }, []);
-
-//   const sendMessage = () => {
-//     socket = io('http://localhost:3000', { query: { userId } });
-//     // return
-//     const recipientId = localStorage.getItem('sendToid'); // ID teman yang akan dikirimi pesan
-//     socket.emit('sendMessage', { senderId: userId, recipientId, message });
-//     // setChatMessages((prevMessages) => [...prevMessages, { senderId: userId, message }]);
-//     setMessage(''); // Kosongkan input setelah pesan dikirim
-//   };
-
-//   return (
-//     <View style={{ padding: 20 }}>
-//       <Text>Friends Online: {onlineFriends.join(', ')}</Text>
-
-//       <FlatList
-//         data={chatMessages}
-//         keyExtractor={(_, index) => index.toString()}
-//         renderItem={({ item }) => (
-//           <Text>{item.senderId}: {item.message}</Text>
-//         )}
-//       />
-
-//       <TextInput
-//         value={message}
-//         onChangeText={setMessage}
-//         placeholder="Type a message"
-//         style={{ borderColor: 'gray', borderWidth: 1, marginBottom: 10, padding: 5 }}
-//       />
-
-//       <Button title="Send Message" onPress={sendMessage} />
-//     </View>
-//   );
-// };
-
-// export default ChatScreen;
+//v1
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
@@ -94,16 +15,16 @@ interface User {
   socketId: string;
 }
 
-const ChatScreen = () => {
+const Chats = ({receiverId}: any) => {
   const [socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
   const [message, setMessage] = useState<string>(''); // Tipe string untuk pesan
   const [messages, setMessages] = useState<Message[]>([]); // State untuk menyimpan pesan
-  const [userId, setUserId] = useState<string>('user123'); // UserId dummy
+  const [userId, setUserId] = useState<string>(''); // UserId dummy
   const [users, setUsers] = useState<any[]>([]); // State untuk user online
 
   useEffect(() => {
-    const id = localStorage.getItem('userId') || 'user123';
-    setUserId(id);
+    const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
+    setUserId(dataUserLogin._id);
     // Inisialisasi koneksi socket
     const newSocket = io('http://localhost:8900', {
       transports: ['websocket'], // Pastikan menggunakan WebSocket
@@ -117,8 +38,9 @@ const ChatScreen = () => {
     });
 
     // Mendengarkan daftar user yang online
-    newSocket.on('getUsers', (onlineUsers: { userId: string; socketId: string }[]) => {
-      setUsers(onlineUsers); // Menyimpan user yang online
+    newSocket.on('getFriendsOnline', (onlineUsers: { userId: string; socketId: string }[]) => {
+      console.log('getFriendsOnline',onlineUsers)
+        setUsers(onlineUsers)
     });
 
     // Mendengarkan pesan yang diterima
@@ -128,6 +50,7 @@ const ChatScreen = () => {
 
     // Cleanup socket saat komponen di-unmount
     return () => {
+      // newSocket.emit('disconnectMod', userId)
       newSocket.disconnect();
     };
   }, [userId]);
@@ -135,7 +58,6 @@ const ChatScreen = () => {
   // Fungsi untuk mengirim pesan
   const sendMessage = () => {
     if (socket && message.trim()) {
-      const receiverId = localStorage.getItem('sendToid'); // Ganti dengan receiverId yang valid
       socket.emit('sendMessage', {
         senderId: userId,
         receiverId,
@@ -227,5 +149,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default Chats;
 

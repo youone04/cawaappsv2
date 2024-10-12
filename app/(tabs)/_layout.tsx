@@ -24,11 +24,11 @@ export default function TabLayout() {
           }}
         />
       <Tabs.Screen
-        name="updates"
+        name="friends"
         options={{
-          title: 'Updates',
+          title: 'Friends',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'chatbubble' : 'chatbubble-outline'} color={color} />
+            <TabBarIcon name={focused ? 'people' : 'people-outline'} color={color} />
           ),
         }}
       />
