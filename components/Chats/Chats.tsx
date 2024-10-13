@@ -6,8 +6,8 @@ import io, { Socket } from 'socket.io-client';
 
 // Definisikan tipe untuk pesan dan user
 interface Message {
-  senderId: string;
-  text: string;
+  from: string;
+  message: string;
 }
 
 interface User {
@@ -15,7 +15,7 @@ interface User {
   socketId: string;
 }
 
-const Chats = ({receiverId}: any) => {
+const Chats = ({receiverId, data}: any) => {
   const [socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
   const [message, setMessage] = useState<string>(''); // Tipe string untuk pesan
   const [messages, setMessages] = useState<Message[]>([]); // State untuk menyimpan pesan
@@ -23,6 +23,9 @@ const Chats = ({receiverId}: any) => {
   const [users, setUsers] = useState<any[]>([]); // State untuk user online
 
   useEffect(() => {
+
+    if(data.data) setMessages(prev => [...prev, ...data.data])
+
     const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
     setUserId(dataUserLogin._id);
     // Inisialisasi koneksi socket
@@ -45,7 +48,9 @@ const Chats = ({receiverId}: any) => {
 
     // Mendengarkan pesan yang diterima
     newSocket.on('getMessage', (message: Message) => {
-      setMessages((prevMessages) => [...prevMessages, message]); // Tambahkan pesan ke state
+      console.log('socket on getMessage',message)
+      if(message.from === receiverId) setMessages((prevMessages) => [...prevMessages, message]); // Tambahkan pesan ke state
+     
     });
 
     // Cleanup socket saat komponen di-unmount
@@ -53,16 +58,19 @@ const Chats = ({receiverId}: any) => {
       // newSocket.emit('disconnectMod', userId)
       newSocket.disconnect();
     };
-  }, [userId]);
+  }, [userId, data.data]);
 
   // Fungsi untuk mengirim pesan
   const sendMessage = () => {
     if (socket && message.trim()) {
-      socket.emit('sendMessage', {
-        senderId: userId,
-        receiverId,
-        text: message,
-      });
+      const from = {
+        from: userId, //senderId
+        to: receiverId,
+        message: message,
+      }
+      socket.emit('sendMessage', from);
+      setMessages(prev => [...prev, from])
+
       setMessage(''); // Reset pesan setelah dikirim
     }
   };
@@ -88,10 +96,10 @@ const Chats = ({receiverId}: any) => {
       <Text style={styles.subTitle}>Messages:</Text>
       <FlatList
         data={messages}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => (
           <Text style={styles.messageText}>
-            {item.senderId}: {item.text}
+            {item.from}: {item.message}
           </Text>
         )}
       />
