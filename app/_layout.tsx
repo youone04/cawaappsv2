@@ -5,6 +5,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import io from 'socket.io-client';
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -18,8 +20,15 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    const newSocket = io('http://localhost:8900', {
+      transports: ['websocket'], // Pastikan menggunakan WebSocket
+    });
     if (loaded) {
       SplashScreen.hideAsync();
+    }
+
+    return () => {
+      newSocket.disconnect();
     }
   }, [loaded]);
 

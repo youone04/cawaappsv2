@@ -3,22 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import io, { Socket } from 'socket.io-client';
-
-// Definisikan tipe untuk pesan dan user
-interface Message {
-  from: string;
-  message: string;
-}
-
-interface User {
-  userId: string;
-  socketId: string;
-}
+import * as Types from "@/helper/types"
 
 const Chats = ({receiverId, data}: any) => {
   const [socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
   const [message, setMessage] = useState<string>(''); // Tipe string untuk pesan
-  const [messages, setMessages] = useState<Message[]>([]); // State untuk menyimpan pesan
+  const [messages, setMessages] = useState<Types.Message[]>([]); // State untuk menyimpan pesan
   const [userId, setUserId] = useState<string>(''); // UserId dummy
   const [users, setUsers] = useState<any[]>([]); // State untuk user online
 
@@ -47,30 +37,31 @@ const Chats = ({receiverId, data}: any) => {
     });
 
     // Mendengarkan pesan yang diterima
-    newSocket.on('getMessage', (message: Message) => {
+    newSocket.on('getMessage', (message: Types.Message) => {
       console.log('socket on getMessage',message)
       if(message.from === receiverId) setMessages((prevMessages) => [...prevMessages, message]); // Tambahkan pesan ke state
      
     });
 
     // Cleanup socket saat komponen di-unmount
-    return () => {
-      // newSocket.emit('disconnectMod', userId)
-      newSocket.disconnect();
-    };
+    // return () => {
+    //   // newSocket.emit('disconnectMod', userId)
+    //   newSocket.disconnect();
+    // };
   }, [userId, data.data]);
 
   // Fungsi untuk mengirim pesan
   const sendMessage = () => {
     if (socket && message.trim()) {
+      const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
       const from = {
         from: userId, //senderId
         to: receiverId,
         message: message,
+        username: dataUserLogin.username
       }
       socket.emit('sendMessage', from);
       setMessages(prev => [...prev, from])
-
       setMessage(''); // Reset pesan setelah dikirim
     }
   };

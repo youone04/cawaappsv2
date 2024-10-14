@@ -4,6 +4,10 @@ import moment from "moment";
 
 
 export default function RecantChats({data}:any) {
+    const dataArray = Array.from(data, ([friendId, details]) => ({
+        friendId,
+        ...details
+      }));
 
     const renderItem = ({ item }: { item: { friendId: string; username: string; lastMessage:string; lastTimestamp:string } }): JSX.Element => (
         <View style={styles.item}>
@@ -22,7 +26,7 @@ export default function RecantChats({data}:any) {
     );
     return (
         <FlatList
-            data={data}
+            data={dataArray}
             renderItem={renderItem}
             keyExtractor={item => item.friendId}
         />
