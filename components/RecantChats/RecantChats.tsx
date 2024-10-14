@@ -9,7 +9,7 @@ export default function RecantChats({data}:any) {
         ...details
       }));
 
-    const renderItem = ({ item }: { item: { friendId: string; username: string; lastMessage:string; lastTimestamp:string } }): JSX.Element => (
+    const renderItem = ({ item }: { item: { friendId: string; username: string; lastMessage:string; lastTimestamp:any } }): JSX.Element => (
         <View style={styles.item}>
             <Image style={styles.image} source={{ uri: 'https://i.pravatar.cc/300' }} />
             <View style={{ flex: 2 }}>
@@ -26,7 +26,7 @@ export default function RecantChats({data}:any) {
     );
     return (
         <FlatList
-            data={dataArray}
+            data={dataArray.map((item: any) => item).sort((a, b) => new Date(b.lastTimestamp).getTime() - new Date(a.lastTimestamp).getTime())}
             renderItem={renderItem}
             keyExtractor={item => item.friendId}
         />

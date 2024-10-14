@@ -8,7 +8,7 @@ import * as Types from "@/helper/types"
 
 
 export default function RecantChatsParent() {
-    const [socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
+    const [_socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
     const [userId, setUserId] = useState<string>(''); // UserId dummy
     const [data, setData] = useState({
         data: new Map(),
@@ -37,14 +37,14 @@ export default function RecantChatsParent() {
         // Mendengarkan pesan yang diterima
         newSocket.on('getMessage', (message: Types.Message) => {
             console.log('message recent', message)
-            const mapData = new Map();
-            mapData.set(message.from, {
+            // const mapData = new Map();
+            data.data.set(message.from, {
                 friendId: message.from,
                 username: message.username,
                 lastMessage: message.message,
                 lastTimestamp: message.lastTimestamp
             })
-            setData(prev => ({ ...prev, data: mapData, loading: false }))
+            setData(prev => ({ ...prev, data: data.data, loading: false }))
 
         });
 
@@ -75,7 +75,6 @@ export default function RecantChatsParent() {
 
         setData(prev => ({ ...prev, data: mapData, loading: false }))
     }
-
     return (
         <>
             {
