@@ -5,12 +5,15 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
 
+
+
 export default function ChatScreenParent() {
   const router = useLocalSearchParams();
   const [data, setData] = useState({
     data: [],
     loading: true
   })
+
 
   useEffect(() => {
     getData();

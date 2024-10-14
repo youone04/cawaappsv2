@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import io, { Socket } from 'socket.io-client';
 import * as Types from "@/helper/types"
+import { fetchData, lisApi } from '@/helper/api';
 
 const Chats = ({receiverId, data}: any) => {
   const [socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
@@ -19,7 +20,7 @@ const Chats = ({receiverId, data}: any) => {
     const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
     setUserId(dataUserLogin._id);
     // Inisialisasi koneksi socket
-    const newSocket = io('http://localhost:8900', {
+    const newSocket = io(lisApi.socket, {
       transports: ['websocket'], // Pastikan menggunakan WebSocket
     });
     setSocket(newSocket);
@@ -51,7 +52,7 @@ const Chats = ({receiverId, data}: any) => {
   }, [userId, data.data]);
 
   // Fungsi untuk mengirim pesan
-  const sendMessage = () => {
+  const sendMessage = async() => {
     if (socket && message.trim()) {
       const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
       const from = {
@@ -60,6 +61,14 @@ const Chats = ({receiverId, data}: any) => {
         message: message,
         username: dataUserLogin.username
       }
+
+      console.log('from', from)
+
+      await fetchData(
+        `${lisApi.cawa}/chats/send`,
+        "POST",
+        JSON.stringify(from)
+       )
       socket.emit('sendMessage', from);
       setMessages(prev => [...prev, from])
       setMessage(''); // Reset pesan setelah dikirim

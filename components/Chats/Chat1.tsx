@@ -1,5 +1,6 @@
 //v1
 
+import { lisApi } from '@/helper/api';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import io, { Socket } from 'socket.io-client';
@@ -26,7 +27,7 @@ const Chats = ({receiverId}: any) => {
     const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
     setUserId(dataUserLogin._id);
     // Inisialisasi koneksi socket
-    const newSocket = io('http://localhost:8900', {
+    const newSocket = io(lisApi.socket, {
       transports: ['websocket'], // Pastikan menggunakan WebSocket
     });
     setSocket(newSocket);

@@ -1,11 +1,11 @@
 import Title from "@/components/Chats/Title"
 import RecantChats from "@/components/RecantChats/RecantChats"
 import { fetchData, lisApi } from "@/helper/api"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Text } from "react-native"
 import io, { Socket } from 'socket.io-client';
 import * as Types from "@/helper/types"
-
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function RecantChatsParent() {
     const [_socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
@@ -15,24 +15,24 @@ export default function RecantChatsParent() {
         loading: true
     })
 
-    useEffect(() => {
-        getData()
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            getData();
+            return () => {
+                console.log('Home tab is unfocused');
+            };
+        }, [])
+    );
 
     useEffect(() => {
         const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
         setUserId(dataUserLogin._id);
 
-        const newSocket = io('http://localhost:8900', {
+        // Saat terkoneksi
+        const newSocket = io(lisApi.socket, {
             transports: ['websocket'], // Pastikan menggunakan WebSocket
         });
         setSocket(newSocket);
-
-        // Saat terkoneksi
-        newSocket.on('connect', () => {
-            console.log('Connected to WebSocket');
-            newSocket.emit('addUser', dataUserLogin._id); // Emit event menambahkan user online
-        });
 
         // Mendengarkan pesan yang diterima
         newSocket.on('getMessage', (message: Types.Message) => {
@@ -48,12 +48,29 @@ export default function RecantChatsParent() {
 
         });
 
-        // return () => {
-        //     newSocket.disconnect();
-        // };
-    }, [userId, data])
+        newSocket.on('connect', () => {
+            console.log('Connected to WebSocket');
+            newSocket.emit('addUser', dataUserLogin._id); // Emit event menambahkan user online
+        });
 
-  
+        newSocket.on('getMessage', (message: Types.Message) => {
+            console.log('message recent', message)
+            // const mapData = new Map();
+            data.data.set(message.from, {
+                friendId: message.from,
+                username: message.username,
+                lastMessage: message.message,
+                lastTimestamp: message.lastTimestamp
+            })
+            setData(prev => ({ ...prev, data: data.data, loading: false }))
+
+        });
+
+        return () => {
+            // newSocket.disconnect();
+        };
+    }, [data.data])
+
 
     const getData = async () => {
         const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);

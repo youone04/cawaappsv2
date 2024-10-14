@@ -20,6 +20,7 @@ export default function RecantChats({data}:any) {
                 <Text style={styles.description}>{moment(item.lastTimestamp).fromNow()}</Text>
                 <Link
                  href={`/chat-screen/${item.friendId}`}
+                 
                 >View details</Link>
             </View>
         </View>
