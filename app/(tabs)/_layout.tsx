@@ -14,15 +14,15 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Chats',
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'chatbox' : 'chatbox-outline'} color={color} />
-            ),
-          }}
-        />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Chats',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'chatbox' : 'chatbox-outline'} color={color} />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="friends"
         options={{
@@ -41,12 +41,22 @@ export default function TabLayout() {
           ),
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name="explore2"
         options={{
           title: 'Explore',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="send-request"
+        options={{
+          title: 'Send Request',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'person-add' : 'person-add-outline'} color={color} />
           ),
         }}
       />

@@ -20,29 +20,29 @@ const Chats = ({receiverId, data}: any) => {
     const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
     setUserId(dataUserLogin._id);
     // Inisialisasi koneksi socket
-    const newSocket = io(lisApi.socket, {
-      transports: ['websocket'], // Pastikan menggunakan WebSocket
-    });
-    setSocket(newSocket);
+    // const newSocket = io(lisApi.socket, {
+    //   transports: ['websocket'], // Pastikan menggunakan WebSocket
+    // });
+    // setSocket(newSocket);
 
-    // Saat terkoneksi
-    newSocket.on('connect', () => {
-      console.log('Connected to WebSocket');
-      newSocket.emit('addUser', userId); // Emit event menambahkan user online
-    });
+    // // Saat terkoneksi
+    // newSocket.on('connect', () => {
+    //   console.log('Connected to WebSocket');
+    //   newSocket.emit('addUser', userId); // Emit event menambahkan user online
+    // });
 
-    // Mendengarkan daftar user yang online
-    newSocket.on('getFriendsOnline', (onlineUsers: { userId: string; socketId: string }[]) => {
-      console.log('getFriendsOnline',onlineUsers)
-        setUsers(onlineUsers)
-    });
+    // // Mendengarkan daftar user yang online
+    // newSocket.on('getFriendsOnline', (onlineUsers: { userId: string; socketId: string }[]) => {
+    //   console.log('getFriendsOnline',onlineUsers)
+    //     setUsers(onlineUsers)
+    // });
 
-    // Mendengarkan pesan yang diterima
-    newSocket.on('getMessage', (message: Types.Message) => {
-      console.log('socket on getMessage',message)
-      if(message.from === receiverId) setMessages((prevMessages) => [...prevMessages, message]); // Tambahkan pesan ke state
+    // // Mendengarkan pesan yang diterima
+    // newSocket.on('getMessage', (message: Types.Message) => {
+    //   console.log('socket on getMessage',message)
+    //   if(message.from === receiverId) setMessages((prevMessages) => [...prevMessages, message]); // Tambahkan pesan ke state
      
-    });
+    // });
 
     // Cleanup socket saat komponen di-unmount
     // return () => {

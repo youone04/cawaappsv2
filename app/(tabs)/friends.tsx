@@ -2,6 +2,8 @@ import Title from "@/components/Chats/Title";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useEffect, useState } from "react";
 import { fetchData, lisApi } from "@/helper/api";
+import { Link } from "expo-router";
+
 export default function Friends() {
     const [friends, setFriends] = useState({
         loading: true,
@@ -34,7 +36,12 @@ export default function Friends() {
                             keyExtractor={(item: any) => item._id}
                             renderItem={(item: any) => (
                                 <View style={styles.container}>
+                                    <Link
+                                        href={`/chat-screen/${item.item._id}`}
+
+                                    > 
                                     <Text>{item.item.username}</Text>
+                                    </Link>
                                 </View>
                             )}
                         />

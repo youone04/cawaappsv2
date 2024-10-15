@@ -7,7 +7,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import io from 'socket.io-client';
 import { lisApi } from '@/helper/api';
-import {Image, StyleSheet} from "react-native"
+import { Image, StyleSheet } from "react-native"
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -29,14 +29,15 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    const newSocket = io(lisApi.socket, {
-      transports: ['websocket'], // Pastikan menggunakan WebSocket
-    });
+
     if (loaded) {
       SplashScreen.hideAsync();
     }
 
     return () => {
+      const newSocket = io(lisApi.socket, {
+        transports: ['websocket'], // Pastikan menggunakan WebSocket
+      });
       newSocket.disconnect();
     }
   }, [loaded]);

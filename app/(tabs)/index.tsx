@@ -25,46 +25,46 @@ export default function RecantChatsParent() {
     );
 
     useEffect(() => {
-        const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
-        setUserId(dataUserLogin._id);
+        // const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
+        // setUserId(dataUserLogin._id);
 
-        // Saat terkoneksi
-        const newSocket = io(lisApi.socket, {
-            transports: ['websocket'], // Pastikan menggunakan WebSocket
-        });
-        setSocket(newSocket);
+        // // Saat terkoneksi
+        // const newSocket = io(lisApi.socket, {
+        //     transports: ['websocket'], // Pastikan menggunakan WebSocket
+        // });
+        // setSocket(newSocket);
 
-        // Mendengarkan pesan yang diterima
-        newSocket.on('getMessage', (message: Types.Message) => {
-            console.log('message recent', message)
-            // const mapData = new Map();
-            data.data.set(message.from, {
-                friendId: message.from,
-                username: message.username,
-                lastMessage: message.message,
-                lastTimestamp: message.lastTimestamp
-            })
-            setData(prev => ({ ...prev, data: data.data, loading: false }))
+        // // Mendengarkan pesan yang diterima
+        // newSocket.on('getMessage', (message: Types.Message) => {
+        //     console.log('message recent', message)
+        //     // const mapData = new Map();
+        //     data.data.set(message.from, {
+        //         friendId: message.from,
+        //         username: message.username,
+        //         lastMessage: message.message,
+        //         lastTimestamp: message.lastTimestamp
+        //     })
+        //     setData(prev => ({ ...prev, data: data.data, loading: false }))
 
-        });
+        // });
 
-        newSocket.on('connect', () => {
-            console.log('Connected to WebSocket');
-            newSocket.emit('addUser', dataUserLogin._id); // Emit event menambahkan user online
-        });
+        // newSocket.on('connect', () => {
+        //     console.log('Connected to WebSocket');
+        //     newSocket.emit('addUser', dataUserLogin._id); // Emit event menambahkan user online
+        // });
 
-        newSocket.on('getMessage', (message: Types.Message) => {
-            console.log('message recent', message)
-            // const mapData = new Map();
-            data.data.set(message.from, {
-                friendId: message.from,
-                username: message.username,
-                lastMessage: message.message,
-                lastTimestamp: message.lastTimestamp
-            })
-            setData(prev => ({ ...prev, data: data.data, loading: false }))
+        // newSocket.on('getMessage', (message: Types.Message) => {
+        //     console.log('message recent', message)
+        //     // const mapData = new Map();
+        //     data.data.set(message.from, {
+        //         friendId: message.from,
+        //         username: message.username,
+        //         lastMessage: message.message,
+        //         lastTimestamp: message.lastTimestamp
+        //     })
+        //     setData(prev => ({ ...prev, data: data.data, loading: false }))
 
-        });
+        // });
 
         return () => {
             // newSocket.disconnect();
