@@ -51,10 +51,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
-        <Stack.Screen name="chat-screen" options={{
-          title: 'params.name',
-          headerBackTitle: "yudi"
-        }} />
+        <Stack.Screen name="chat-screen"/>
         <Stack.Screen name="login-screen" />
       </Stack>
     </ThemeProvider>

@@ -5,6 +5,7 @@ export interface Message {
     username: string;
     lastTimestamp?: string | number;
     to: string;
+    timestamp?: string | number;
 
   }
   

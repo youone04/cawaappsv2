@@ -6,6 +6,7 @@ import { Text } from "react-native"
 import io, { Socket } from 'socket.io-client';
 import * as Types from "@/helper/types"
 import { useFocusEffect } from '@react-navigation/native';
+import { getDataStorage } from "@/helper/store"
 
 export default function RecantChatsParent() {
     const [_socket, setSocket] = useState<Socket | null>(null); // Socket tipe dengan nullable
@@ -24,9 +25,9 @@ export default function RecantChatsParent() {
         }, [])
     );
 
-    useEffect(() => {
-        const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
-        setUserId(dataUserLogin._id);
+     useEffect(() => {
+        // const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
+        // setUserId(dataUserLogin._id);
 
         // Saat terkoneksi
         const newSocket = io(lisApi.socket, {
@@ -48,8 +49,9 @@ export default function RecantChatsParent() {
 
         });
 
-        newSocket.on('connect', () => {
+        newSocket.on('connect', async() => {
             console.log('Connected to WebSocket');
+            const dataUserLogin: any = await getDataStorage();
             newSocket.emit('addUser', dataUserLogin._id); // Emit event menambahkan user online
         });
 
@@ -65,17 +67,14 @@ export default function RecantChatsParent() {
             setData(prev => ({ ...prev, data: data.data, loading: false }))
 
         });
-
-        return () => {
-            // newSocket.disconnect();
-        };
     }, [data.data])
 
 
     const getData = async () => {
-        const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
+        // const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
+        const dataUserLogin: any = await getDataStorage();
         const recantChat = await fetchData(
-            `${lisApi.cawa}/chats/recent/${dataUserLogin._id}`,
+            `${lisApi.cawaMobile}/chats/recent/${dataUserLogin._id}`,
             "GET"
         )
 

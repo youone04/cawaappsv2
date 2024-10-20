@@ -32,15 +32,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="friends-request"
         options={{
@@ -55,6 +47,16 @@ export default function TabLayout() {
         name="send-request"
         options={{
           title: 'Send Request',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'person-add' : 'person-add-outline'} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="login-screen"
+        options={{
+          title: 'Login',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'person-add' : 'person-add-outline'} color={color} />
           ),

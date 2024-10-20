@@ -1,9 +1,11 @@
 import CardComponent from "@/components/Card/Card"
+import Title from "@/components/Chats/Title";
 import { fetchData, lisApi } from "@/helper/api"
+import { getDataStorage } from "@/helper/store";
 import { useEffect, useState } from "react"
-import {View, Text, StyleSheet, TextInput, TouchableOpacity} from "react-native"
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native"
 
-export default function sendRequest(){
+export default function sendRequest() {
     const [pinUser, setPinUser] = useState('');
     const [data, setData] = useState(null);
     const [dataFriend, setDataFriend] = useState({
@@ -11,60 +13,60 @@ export default function sendRequest(){
         loading: true
     });
 
-    const searchPinUser = async (e:any) => {
-       setPinUser(e.target.value)
+    const searchPinUser = async (value: any) => {
+        setPinUser(value)
     }
 
-    const handleGetUserByPin = async() => {
-        const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
-       const data = await fetchData(
-            lisApi.cawa + `/users/${dataUserLogin._id}/pin/${pinUser}`,
+    const handleGetUserByPin = async () => {
+        // const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
+        const dataUserLogin: any = await getDataStorage();
+        console.log(dataUserLogin._id)
+        const dataRes = await fetchData(
+            lisApi.cawaMobile + `/users/${dataUserLogin._id}/pin/${pinUser}`,
             "GET"
         );
-        setData(data);
+        console.log('dataRes',pinUser)
+        setData(dataRes);
     }
 
     useEffect(() => {
         handleSendRequest();
-    },[])
+    }, [])
 
-    const handleSendRequest = async() => {  
-        const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
-       const data =  await fetchData(
-            `${lisApi.cawa}/users/${dataUserLogin._id}/sent-friend-requests`,
+    const handleSendRequest = async () => {
+        // const dataUserLogin = JSON.parse(localStorage.getItem('dataUser')!);
+        const dataUserLogin: any = await getDataStorage();
+        const data = await fetchData(
+            `${lisApi.cawaMobile}/users/${dataUserLogin._id}/sent-friend-requests`,
             "GET"
         );
 
         setDataFriend(prev => ({ ...prev, data: data, loading: false }))
     }
-
     return (
-       <View>
-         <View>
-            <TextInput onChange={searchPinUser} style={styles.textInput} placeholder="PIN" />
-            <TouchableOpacity onPress={handleGetUserByPin}>
-                <Text>Search</Text>
-            </TouchableOpacity >
+        <View>
+            <Title />
+            <View style={styles.container}>
+                <View>
+                    <TextInput onChangeText={searchPinUser} style={styles.textInput} placeholder="PIN" />
+                    <TouchableOpacity style={styles.search} onPress={handleGetUserByPin}>
+                        <Text style={styles.searchText}>Search</Text>
+                    </TouchableOpacity >
+                </View>
+                {
+                    data && (<CardComponent data={data} icon={true} />)
+                }
+                <View style={styles.line} />
+                <CardComponent data={dataFriend.data} icon={false} />
+            </View>
         </View>
-        <CardComponent data={data} icon={true}/>
-
-        <View style={styles.line}/>
-
-        <CardComponent data={dataFriend.data} icon={false}/>
-
-
-
-       </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        display:'flex',
-        flexDirection:'row',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: 'flex',
+        padding: 10
     },
     title: {
         fontSize: 20,
@@ -75,18 +77,27 @@ const styles = StyleSheet.create({
         height: 1,
         width: '80%',
     },
-    textInput:{
+    search:{
+        padding: 10,
+        backgroundColor: 'green',
+        width: '17%',
+        borderRadius: 5
+    },
+    searchText: {
+        color: 'white'
+    },
+    textInput: {
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
         padding: 10,
         marginBottom: 10,
     },
-    line:{
+    line: {
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 10,
         marginBottom: 10,
+        marginTop: 10
     }
 })

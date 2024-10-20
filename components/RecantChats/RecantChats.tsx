@@ -1,16 +1,19 @@
-import { View, Text, FlatList, StyleSheet, Image } from "react-native"
-import { Link } from 'expo-router';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native"
+import { router } from 'expo-router';
 import moment from "moment";
 
 
-export default function RecantChats({data}:any) {
+export default function RecantChats({ data }: any) {
     const dataArray = Array.from(data, ([friendId, details]) => ({
         friendId,
         ...details
-      }));
+    }));
 
-    const renderItem = ({ item }: { item: { friendId: string; username: string; lastMessage:string; lastTimestamp:any } }): JSX.Element => (
-        <View style={styles.item}>
+    const renderItem = ({ item }: { item: { friendId: string; username: string; lastMessage: string; lastTimestamp: any } }): JSX.Element => (
+        <TouchableOpacity
+            style={styles.item}
+            onPress={() => router.push(`/chat-screen/${item.friendId}`)}
+        >
             <Image style={styles.image} source={{ uri: 'https://i.pravatar.cc/300' }} />
             <View style={{ flex: 2 }}>
                 <Text style={styles.title}>{item.username}</Text>
@@ -18,12 +21,8 @@ export default function RecantChats({data}:any) {
             </View>
             <View style={{ flex: 1 }}>
                 <Text style={styles.description}>{moment(item.lastTimestamp).fromNow()}</Text>
-                <Link
-                 href={`/chat-screen/${item.friendId}`}
-                 
-                >View details</Link>
             </View>
-        </View>
+        </TouchableOpacity>
     );
     return (
         <FlatList
@@ -43,14 +42,14 @@ const styles = StyleSheet.create({
     image: {
         width: 45,
         height: 45,
-        borderRadius: 25,
-        flex: 1
+        borderRadius: 45
     },
     title: {
         fontSize: 23,
         fontWeight: 'bold'
     },
     description: {
-        fontSize: 16
+        fontSize: 14,
+        marginTop: 3
     }
 });

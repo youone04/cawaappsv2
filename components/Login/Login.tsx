@@ -1,36 +1,39 @@
 import { useState } from "react";
-import { StyleSheet, View, TextInput, Image, Text, Button, SafeAreaView, TouchableOpacity } from "react-native"
+import { StyleSheet, View, TextInput, Image, Text, SafeAreaView, TouchableOpacity } from "react-native"
+import LayoutCard from "../LayoutCard";
+import { fetchData, lisApi } from "@/helper/api";
+import { storeDataStorage } from "@/helper/store";
+import { router } from "expo-router";
 
-
-const Card = () => {
-    const [auth , setAuth] = useState({
+const CardLogin = () => {
+    const [auth, setAuth] = useState({
         username: '',
         password: ''
     })
 
-    const handleLogin = async() => {
-       try{
-        const postLogin = await fetch('http://localhost:3001/users/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(auth)
-        })
-        const dataLogin = await postLogin.json()
-        if(dataLogin.status === 200){
-            localStorage.setItem('dataUser', JSON.stringify(dataLogin.data))
-            //redirect to home
-            window.location.href = '/'
+    const handleLogin = async () => {
+        try {
+            const postLogin = await fetchData(
+                `${lisApi.cawaMobile}/users/login`,
+                "POST",
+                JSON.stringify(auth)
+            )
+            console.log('postLogin',postLogin)
+            if (postLogin.status === 200) {
+               await storeDataStorage(JSON.stringify(postLogin.data))
+                // localStorage.setItem('dataUser', JSON.stringify(postLogin.data))
+                //redirect to home
+                router.replace('/')
+                // window.location.href = '/'
+            }
+        } catch (err) {
+            console.log(err)
         }
-       }catch(err){
-           console.log(err)
-       }
-        
+
     }
 
     return (
-        <View style={styles.card}>
+        <LayoutCard>
             <Image
                 source={{ uri: 'https://via.placeholder.com/150' }} // Replace with your image URL
                 style={styles.image}
@@ -54,14 +57,14 @@ const Card = () => {
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </LayoutCard>
     );
 };
 
 const Login = () => {
     return (
         <SafeAreaView style={styles.container}>
-            <Card />
+            <CardLogin />
         </SafeAreaView>
     )
 }
@@ -72,19 +75,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5', // Optional: background color
-    },
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        elevation: 3, // For Android shadow
-        shadowColor: '#000', // For iOS shadow
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        margin: 10,
-        overflow: 'hidden',
-        height: 400,
-        width: '90%', // Optional: adjust width
     },
     image: {
         width: '100%',
@@ -107,7 +97,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
     },
-    button:{
+    button: {
         borderRadius: 4,
         backgroundColor: '#007bff'
     },
